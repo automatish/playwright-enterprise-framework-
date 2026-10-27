@@ -1,0 +1,7 @@
+node_modules
+reports
+test-results
+blob-report
+.auth
+package-lock.json
+**/__screenshots__/**

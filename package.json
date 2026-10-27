@@ -1,0 +1,45 @@
+{
+  "name": "playwright-enterprise-framework",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Enterprise-grade Playwright + TypeScript E2E framework targeting the Cypress Real World App (fintech payments).",
+  "license": "MIT",
+  "engines": {
+    "node": ">=22.13.0"
+  },
+  "scripts": {
+    "app:up": "docker compose up -d --wait rwa",
+    "app:down": "docker compose down -v",
+    "test": "playwright test",
+    "test:e2e": "playwright test --project=e2e-chromium",
+    "test:visual": "playwright test --project=visual-chromium",
+    "test:visual:update": "docker compose run --rm tests npx playwright test --project=visual-chromium --update-snapshots",
+    "test:headed": "playwright test --project=e2e-chromium --headed",
+    "test:docker": "docker compose run --rm tests",
+    "report:html": "playwright show-report reports/html",
+    "report:allure": "allure generate reports/allure-results --clean -o reports/allure-report && allure open reports/allure-report",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "verify": "npm run typecheck && npm run lint && npm run format:check"
+  },
+  "devDependencies": {
+    "@eslint/js": "10.0.1",
+    "@faker-js/faker": "10.6.0",
+    "@playwright/test": "1.63.0",
+    "@types/node": "22.20.5",
+    "allure-commandline": "2.46.1",
+    "allure-js-commons": "3.14.0",
+    "allure-playwright": "3.14.0",
+    "dotenv": "17.4.2",
+    "eslint": "10.13.0",
+    "eslint-plugin-playwright": "2.12.1",
+    "pino": "10.4.0",
+    "pino-pretty": "13.2.0",
+    "prettier": "3.9.10",
+    "typescript": "6.0.3",
+    "typescript-eslint": "8.72.1",
+    "zod": "4.6.7"
+  }
+}

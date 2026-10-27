@@ -1,0 +1,195 @@
+name: E2E CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      browsers:
+        description: 'Engines for the e2e project (comma-separated)'
+        type: choice
+        options: ['chromium', 'chromium,firefox,webkit']
+        default: 'chromium'
+  schedule:
+    # Nightly regression run against the pinned application image.
+    - cron: '17 3 * * *'
+
+concurrency:
+  group: e2e-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  BROWSERS: ${{ inputs.browsers || 'chromium' }}
+  RWA_IMAGE: pw-enterprise/rwa:0729f68
+  TESTS_IMAGE: pw-enterprise/tests:latest
+
+jobs:
+  quality:
+    name: Lint · Typecheck · Format
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+        env:
+          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
+      - run: npm run verify
+
+  e2e:
+    name: E2E shard ${{ matrix.shard }}/3
+    needs: quality
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: docker/setup-buildx-action@v3
+
+      - name: Build application under test (Cypress RWA, cached)
+        uses: docker/build-push-action@v6
+        with:
+          context: docker/rwa
+          tags: ${{ env.RWA_IMAGE }}
+          load: true
+          cache-from: type=gha,scope=rwa
+          cache-to: type=gha,scope=rwa,mode=max
+
+      - name: Build test runner image (cached)
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          tags: ${{ env.TESTS_IMAGE }}
+          load: true
+          cache-from: type=gha,scope=tests
+          cache-to: type=gha,scope=tests,mode=max
+
+      - name: Start application and wait for health
+        run: docker compose up -d --wait --no-build rwa
+
+      - name: Run Playwright (shard ${{ matrix.shard }}/3)
+        run: docker compose run --rm tests --shard=${{ matrix.shard }}/3
+
+      - name: Application logs
+        if: failure()
+        run: docker compose logs rwa --tail 300
+
+      - name: Upload blob report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: blob-report-${{ matrix.shard }}
+          path: reports/blob
+          retention-days: 7
+
+      - name: Upload Allure results
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results-${{ matrix.shard }}
+          path: reports/allure-results
+          retention-days: 7
+
+      - name: Upload failure artifacts (traces, videos, screenshots)
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-${{ matrix.shard }}
+          path: test-results
+          retention-days: 7
+
+  report:
+    name: Merge reports & publish
+    needs: e2e
+    if: ${{ !cancelled() }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - run: npm ci --no-audit --no-fund
+        env:
+          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
+
+      - name: Download Allure results
+        uses: actions/download-artifact@v4
+        with:
+          pattern: allure-results-*
+          path: allure-results
+          merge-multiple: true
+
+      - name: Restore Allure history from gh-pages (trend lines)
+        continue-on-error: true
+        run: |
+          git fetch --depth=1 origin gh-pages
+          mkdir -p allure-results/history
+          git archive origin/gh-pages history | tar -x -C allure-results
+
+      - name: Add CI executor metadata
+        run: |
+          cat > allure-results/executor.json <<EOF
+          {
+            "name": "GitHub Actions",
+            "type": "github",
+            "url": "${{ github.server_url }}/${{ github.repository }}/actions",
+            "buildOrder": ${{ github.run_number }},
+            "buildName": "${{ github.workflow }} #${{ github.run_number }}",
+            "buildUrl": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}",
+            "reportUrl": "https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/",
+            "reportName": "Allure Report"
+          }
+          EOF
+
+      - name: Generate Allure report
+        run: npx allure generate allure-results --clean -o site
+
+      - name: Download blob reports
+        uses: actions/download-artifact@v4
+        with:
+          pattern: blob-report-*
+          path: all-blob-reports
+          merge-multiple: true
+
+      # After Allure (which cleans `site/`): the merged Playwright report lives at <pages>/playwright/.
+      - name: Merge shards into one Playwright HTML report
+        run: npx playwright merge-reports --reporter html ./all-blob-reports
+        env:
+          PLAYWRIGHT_HTML_OUTPUT_DIR: site/playwright
+          PLAYWRIGHT_HTML_OPEN: never
+
+      - name: Upload merged reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-reports
+          path: site
+          retention-days: 14
+
+      - name: Publish to GitHub Pages
+        if: github.event_name != 'pull_request' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: gh-pages
+          publish_dir: site
+          keep_files: false
+          commit_message: 'Allure report for ${{ github.sha }}'

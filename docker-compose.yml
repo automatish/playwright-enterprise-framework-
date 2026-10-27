@@ -1,0 +1,57 @@
+# One-command, hermetic execution:
+#   docker compose up -d --wait rwa      # application under test only
+#   docker compose run --rm tests        # full suite against it
+#   docker compose --profile report up allure   # browse the Allure report at http://localhost:5050
+name: pw-enterprise
+
+services:
+  rwa:
+    build:
+      context: docker/rwa
+    image: pw-enterprise/rwa:0729f68
+    ports:
+      - '3000:3000'
+      - '3001:3001'
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - "Promise.all([fetch('http://localhost:3000'),fetch('http://localhost:3001/checkAuth')]).then(([f,b])=>process.exit(f.ok&&b.status===401?0:1)).catch(()=>process.exit(1))"
+      interval: 5s
+      timeout: 5s
+      start_period: 60s
+      retries: 30
+
+  tests:
+    build:
+      context: .
+    image: pw-enterprise/tests:latest
+    # RWA's front-end hard-codes http://localhost:3001 for API calls, so the runner shares the
+    # app container's network namespace: "localhost" means the same thing to browser and app.
+    network_mode: 'service:rwa'
+    depends_on:
+      rwa:
+        condition: service_healthy
+    environment:
+      CI: 'true'
+      BASE_URL: http://localhost:3000
+      API_URL: http://localhost:3001
+      BROWSERS: ${BROWSERS:-chromium}
+    ipc: host
+    volumes:
+      - ./reports:/e2e/reports
+      - ./test-results:/e2e/test-results
+      # Lets `--update-snapshots` write baselines back to the host checkout.
+      - ./tests:/e2e/tests
+
+  allure:
+    profiles: ['report']
+    image: frankescobar/allure-docker-service:2.44.0
+    environment:
+      CHECK_RESULTS_EVERY_SECONDS: 3
+      KEEP_HISTORY: 1
+    ports:
+      - '5050:5050'
+    volumes:
+      - ./reports/allure-results:/app/allure-results
