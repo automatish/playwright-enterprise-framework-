@@ -1,0 +1,2 @@
+{"level":30,"time":1793108384522,"worker":"3","scope":"auth","username":"GeorgiaRauRaw2858ec768a1","id":"v3QrLfcm9","balance":12345,"msg":"persona provisioned"}
+{"level":30,"time":1793108384697,"worker":"3","scope":"page","page":"BankAccountsPage","path":"/bankaccounts","msg":"navigate"}

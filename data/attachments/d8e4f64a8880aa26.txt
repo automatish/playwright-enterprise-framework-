@@ -1,0 +1,2 @@
+{"level":30,"time":1793108385606,"worker":"3","scope":"auth","username":"NovellaRunolw23531d148c9","id":"Rbtw0GYXy","balance":0,"msg":"persona provisioned"}
+{"level":30,"time":1793108385613,"worker":"3","scope":"page","page":"SignInPage","path":"/signin","msg":"navigate"}

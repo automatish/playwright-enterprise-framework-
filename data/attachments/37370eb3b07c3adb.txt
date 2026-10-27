@@ -1,0 +1,3 @@
+{"level":30,"time":1793108379887,"worker":"3","scope":"page","page":"TransactionsFeedPage","path":"/","msg":"navigate"}
+{"level":30,"time":1793108380816,"worker":"3","scope":"network","method":"GET","path":"/transactions/public","fault":"delay:3000ms","msg":"fault injected"}
+{"level":30,"time":1793108383975,"worker":"3","scope":"network","msg":"network restored"}

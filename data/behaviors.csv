@@ -1,0 +1,8 @@
+"BROKEN","EPIC","FAILED","FEATURE","PASSED","SKIPPED","STORY","UNKNOWN"
+"0","User experience","0","Visual consistency","3","0","","0"
+"0","Platform reliability","0","Network fault tolerance","8","0","","0"
+"0","Accounts","0","Linked bank accounts","1","0","","0"
+"0","Identity","0","Sign in","3","0","","0"
+"0","Payments","0","Balance integrity","1","0","Transfer debits sender and credits recipient exactly once","0"
+"0","","0","","1","0","","0"
+"0","Payments","0","Send money","1","0","Signed-in user pays a contact from the UI","0"

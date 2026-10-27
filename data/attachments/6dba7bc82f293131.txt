@@ -1,0 +1,4 @@
+{"level":30,"time":1793108381226,"worker":"1","scope":"auth","username":"RonRyanw058d8538665","id":"4Xb3F8xrxz","balance":30000,"msg":"persona provisioned"}
+{"level":30,"time":1793108381232,"worker":"1","scope":"auth","username":"BradyWiegandw0f93016c6a0","id":"DnX2cB9CIl","balance":0,"msg":"persona provisioned"}
+{"level":30,"time":1793108381540,"worker":"1","scope":"page","page":"NewTransactionPage","path":"/transaction/new","msg":"navigate"}
+{"level":30,"time":1793108383987,"worker":"1","scope":"network","method":"POST","path":"/transactions","fault":"abort:internetdisconnected","msg":"fault injected"}

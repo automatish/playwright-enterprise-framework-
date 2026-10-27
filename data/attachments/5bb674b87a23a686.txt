@@ -1,0 +1,6 @@
+{"level":30,"time":1793108380574,"worker":"2","scope":"auth","username":"WillStrosinw156704b5ab6","id":"4YINQUSfm","balance":30000,"msg":"persona provisioned"}
+{"level":30,"time":1793108380579,"worker":"2","scope":"auth","username":"WainoHayesw18120277c73","id":"N4pAqPdHL9","balance":0,"msg":"persona provisioned"}
+{"level":30,"time":1793108380768,"worker":"2","scope":"page","page":"NewTransactionPage","path":"/transaction/new","msg":"navigate"}
+{"level":30,"time":1793108382603,"worker":"2","scope":"network","method":"POST","path":"/transactions","fault":"abort:internetdisconnected","msg":"fault injected"}
+{"level":30,"time":1793108382684,"worker":"2","scope":"network","msg":"network restored"}
+{"level":30,"time":1793108382685,"worker":"2","scope":"page","page":"TransactionsFeedPage","path":"/","msg":"navigate"}

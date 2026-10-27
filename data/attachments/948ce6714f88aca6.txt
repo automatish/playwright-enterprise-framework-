@@ -1,0 +1,2 @@
+{"level":30,"time":1793108377107,"worker":"0","scope":"auth","username":"ElroyGorczanw02f1f494907","id":"7VUBrWunW","balance":500000,"msg":"persona provisioned"}
+{"level":30,"time":1793108378306,"worker":"0","username":"ElroyGorczanw02f1f494907","msg":"primary persona ready"}

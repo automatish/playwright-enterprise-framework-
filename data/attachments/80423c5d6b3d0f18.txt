@@ -1,0 +1,4 @@
+{"level":30,"time":1793108385609,"worker":"1","scope":"auth","username":"ArleneAbshirw0697271d46a","id":"xY2LE3LQU","balance":100000,"msg":"persona provisioned"}
+{"level":30,"time":1793108385613,"worker":"1","scope":"auth","username":"EddLangworthw0fba83db5bc","id":"TzFnHQS4Jb","balance":0,"msg":"persona provisioned"}
+{"level":30,"time":1793108385883,"worker":"1","scope":"page","page":"TransactionsFeedPage","path":"/","msg":"navigate"}
+{"level":30,"time":1793108387583,"worker":"1","scope":"page","page":"NewTransactionPage","path":"/transaction/new","msg":"navigate"}

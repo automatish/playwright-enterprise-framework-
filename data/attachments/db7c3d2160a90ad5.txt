@@ -1,0 +1,2 @@
+{"level":30,"time":1793108388710,"worker":"3","scope":"auth","username":"JazlynKautzew2a2b0702584","id":"JwYPp3JON","balance":0,"msg":"persona provisioned"}
+{"level":30,"time":1793108388857,"worker":"3","scope":"page","page":"BankAccountsPage","path":"/bankaccounts","msg":"navigate"}

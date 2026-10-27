@@ -1,0 +1,3 @@
+{"level":30,"time":1793108379983,"worker":"1","scope":"page","page":"TransactionsFeedPage","path":"/","msg":"navigate"}
+{"level":30,"time":1793108381235,"worker":"1","scope":"network","profile":{"downloadKbps":400,"uploadKbps":400,"latencyMs":2000},"msg":"network throttled"}
+{"level":30,"time":1793108384018,"worker":"1","scope":"network","msg":"network restored"}

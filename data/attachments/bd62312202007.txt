@@ -1,0 +1,4 @@
+{"level":30,"time":1793108377440,"worker":"2","scope":"page","page":"TransactionsFeedPage","path":"/","msg":"navigate"}
+{"level":30,"time":1793108378531,"worker":"2","scope":"network","method":"GET","path":"/transactions/public","fault":"abort:timedout","msg":"fault injected"}
+{"level":30,"time":1793108378817,"worker":"2","scope":"network","msg":"network restored"}
+{"level":30,"time":1793108379611,"worker":"2","scope":"network","msg":"network restored"}

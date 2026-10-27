@@ -1,0 +1,2 @@
+{"level":30,"time":1793108375033,"worker":"0","scope":"auth","username":"PriscillaWilw041635df6ba","id":"cN2Yzb44v","balance":500000,"msg":"persona provisioned"}
+{"level":30,"time":1793108375875,"worker":"0","username":"PriscillaWilw041635df6ba","msg":"primary persona ready"}

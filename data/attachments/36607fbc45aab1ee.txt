@@ -1,0 +1,2 @@
+{"level":30,"time":1793108381198,"worker":"2","scope":"auth","username":"BriaYundtw1e41c71db0d","id":"9A5il13ad","balance":0,"msg":"persona provisioned"}
+{"level":30,"time":1793108381204,"worker":"2","scope":"page","page":"TransactionsFeedPage","path":"/","msg":"navigate"}
